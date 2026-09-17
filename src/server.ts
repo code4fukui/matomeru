@@ -115,6 +115,12 @@ function estimate(textLength: number, audioMinutes: number) {
   );
   return { usd: Number(usd.toFixed(4)), points: Math.max(10, Math.ceil(usd * pointsPerUsd)) };
 }
+function recordPointTransaction(userId: string, points: number, reason: string, createdAt = now()) {
+  if (!points) return;
+  db.prepare(
+    "INSERT INTO point_transactions(user_id,points,reason,created_at) VALUES(?,?,?,?)",
+  ).run(userId, points, reason, createdAt);
+}
 async function transcribe(file: File) {
   const form = new FormData();
   form.append("file", file);
@@ -227,10 +233,13 @@ function realtime(request: Request, user: { id: string; points: number }) {
     const newMinutes = minutes - chargedMinutes;
     if (newMinutes <= 0) return true;
     const points = Math.ceil(newMinutes * realtimeTranscriptionUsdPerMinute * pointsPerUsd);
+    const t = now();
+    db.exec("BEGIN");
     const result = db.prepare(
       "UPDATE users SET points=points-?,updated_at=? WHERE id=? AND points>=?",
-    ).run(points, now(), user.id, points);
+    ).run(points, t, user.id, points);
     if (result.changes !== 1) {
+      db.exec("ROLLBACK");
       send({
         type: "error",
         error: "ポイント不足です",
@@ -240,6 +249,8 @@ function realtime(request: Request, user: { id: string; points: number }) {
       socket.close();
       return false;
     }
+    recordPointTransaction(user.id, -points, "リアルタイム議事録", t);
+    db.exec("COMMIT");
     chargedMinutes = minutes;
     chargedPoints += points;
     send({ type: "usage.charged", points, minutes: chargedMinutes });
@@ -276,6 +287,7 @@ function realtime(request: Request, user: { id: string; points: number }) {
         t,
         user.id,
       );
+      recordPointTransaction(user.id, -remainingPoints, "リアルタイム議事録", t);
       db.prepare(
         "INSERT INTO minutes(user_id,title,transcript,result_json,estimated_usd,charged_points,created_at) VALUES(?,?,?,?,?,?,?)",
       ).run(
@@ -539,6 +551,7 @@ async function api(request: Request, url: URL) {
           t,
           t,
         );
+        recordPointTransaction(challenge.user_id, 100, "新規登録ボーナス", t);
       }
       db.prepare(
         "INSERT INTO passkeys(id,user_id,public_key,counter,transports,created_at) VALUES(?,?,?,?,?,?)",
@@ -732,6 +745,14 @@ async function api(request: Request, url: URL) {
       ).map((m) => ({ ...m, result: JSON.parse(m.result_json) })),
     );
   }
+  if (url.pathname === "/api/point-history" && request.method === "GET") {
+    return json(
+      rows(
+        "SELECT points,reason,created_at FROM point_transactions WHERE user_id=? ORDER BY id DESC LIMIT 200",
+        user.id,
+      ),
+    );
+  }
   if (url.pathname === "/api/minutes" && request.method === "POST") {
     const form = await request.formData();
     const title = String(form.get("title") || "無題の会議").slice(0, 120);
@@ -756,6 +777,7 @@ async function api(request: Request, url: URL) {
         t,
         user.id,
       );
+      recordPointTransaction(user.id, -cost.points, "議事録作成", t);
       db.prepare(
         "INSERT INTO minutes(user_id,title,transcript,result_json,estimated_usd,charged_points,created_at) VALUES(?,?,?,?,?,?,?)",
       ).run(user.id, title, transcript, JSON.stringify(result), cost.usd, cost.points, t);
@@ -785,11 +807,14 @@ async function api(request: Request, url: URL) {
     if (!Number.isInteger(points) || points < 1 || points > 1_000_000) {
       return fail("ポイントは1〜1,000,000の整数で指定してください");
     }
+    const targetUserId = decodeURIComponent(add[1]);
+    const t = now();
     db.prepare("UPDATE users SET points=points+?,updated_at=? WHERE id=?").run(
       points,
-      now(),
-      decodeURIComponent(add[1]),
+      t,
+      targetUserId,
     );
+    recordPointTransaction(targetUserId, points, "管理者によるポイント追加", t);
     return json({ ok: true });
   }
   return fail("Not found", 404);

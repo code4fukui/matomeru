@@ -3,18 +3,21 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>matomeru — AI議事録</title>
+    <title>マトメル / matomeru — リアルタイム議事録おまとめサービス</title>
     <link rel="stylesheet" href="/style.css">
   </head>
   <body>
     <main>
       <header>
-        <div><span class="eyebrow">AI MEETING NOTES</span><h1>matomeru</h1></div>
+        <div
+          class="brand"><span class="eyebrow">REALTIME MEETING NOTES</span><h1>リアルタイム議事録おまとめサービス</h1><p class="brand-subtitle">マトメル / matomeru</p></div>
         <div
           id="account"><span id="balance">残高 <strong><span id="points">0</span> pt</strong></span></div>
       </header>
-      <section id="login" class="card">
-        <h2>matomeruを始める</h2>
+      <section id="login" class="card hero-card">
+        <div
+          class="hero-copy"><span class="hero-mark">●</span><div><h2>話すだけで、会議がまとまる。</h2><p>リアルタイムに文字起こししながら、話者ごとの要点・次のアクション・深掘りすべき論点を整理します。</p></div></div>
+        <div class="hero-label">マトメル / matomeru を始める</div>
         <div
           class="passkey-actions"><button id="passkeyLoginButton">パスキーでログイン</button><button id="passkeyRegisterButton" class="secondary">新規登録</button></div>
         <p id="passkeyStatus" class="hint">端末の指紋認証・顔認証・画面ロックを利用します。</p>
@@ -67,6 +70,8 @@
           <h2>過去の議事録</h2>
           <p class="hint">リアルタイム議事録をとった日時と要点をタイトルとして表示しています。</p>
           <div id="history" class="history empty">まだ議事録はありません。</div>
+          <h2 class="subsection-title">利用履歴</h2>
+          <div id="pointHistory" class="point-history empty">利用履歴はありません。</div>
         </section>
         <section id="admin" class="card" hidden>
           <h2>管理画面</h2>

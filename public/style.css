@@ -1,26 +1,36 @@
 :root {
-  font-family: system-ui,sans-serif;
+  font-family: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   color: #17202a;
   background: #f5f6f2;
   --ink: #17202a;
+  --muted: #68736c;
+  --line: #e3e5df;
   --accent: #e76f51;
+  --success: #2f855a;
+  --danger: #c05640;
 }
 * {
   box-sizing: border-box;
 }
 body {
   margin: 0;
+  background:
+    radial-gradient(circle at 8% 0%, #f8d8c566, transparent 30rem),
+    radial-gradient(circle at 95% 18%, #d6eadb99, transparent 32rem),
+    #f5f6f2;
+  min-height: 100vh;
 }
 main {
   max-width: 1180px;
   margin: auto;
-  padding: 32px 20px;
+  padding: 42px 24px 64px;
 }
 header {
   display: flex;
   justify-content: space-between;
   align-items: start;
-  margin-bottom: 36px;
+  margin-bottom: 46px;
+  gap: 24px;
 }
 #account {
   display: flex;
@@ -38,9 +48,20 @@ header {
   padding: 4px 0;
 }
 h1 {
-  font-size: 42px;
-  letter-spacing: -2px;
-  margin: 2px 0;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.12;
+  letter-spacing: -.06em;
+  margin: 5px 0 0;
+  max-width: 720px;
+}
+h1 + .brand-subtitle {
+  margin: 12px 0 0;
+}
+.brand-subtitle {
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .04em;
 }
 h2 {
   margin-top: 0;
@@ -58,6 +79,40 @@ h2 {
   padding: 24px;
   box-shadow: 0 8px 30px #24351a0a;
   margin-bottom: 20px;
+}
+.hero-card {
+  padding: clamp(26px, 5vw, 54px);
+  background: linear-gradient(135deg, #fff 0%, #fffaf5 100%);
+  border-color: #eaded4;
+}
+.hero-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  max-width: 720px;
+  margin-bottom: 34px;
+}
+.hero-copy h2 {
+  font-size: clamp(25px, 3vw, 38px);
+  letter-spacing: -.06em;
+  margin-bottom: 12px;
+}
+.hero-copy p {
+  color: var(--muted);
+  line-height: 1.8;
+  margin: 0;
+}
+.hero-mark {
+  color: var(--accent);
+  font-size: 26px;
+  line-height: 1;
+  text-shadow: 9px 7px 0 #efb6a344;
+}
+.hero-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 .grid {
   display: grid;
@@ -201,6 +256,28 @@ dialog::backdrop {
   display: grid;
   gap: 8px;
 }
+.subsection-title {
+  margin-top: 2rem;
+}
+.point-history {
+  display: grid;
+  gap: .5rem;
+}
+.point-history-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .7rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .9rem;
+}
+.point-history-item strong.credit {
+  color: var(--success);
+}
+.point-history-item strong.debit {
+  color: var(--danger);
+}
 .history-item {
   display: flex;
   justify-content: space-between;
@@ -312,6 +389,25 @@ dialog::backdrop {
   cursor: pointer;
 }
 @media (max-width:760px) {
+  main {
+    padding: 28px 16px 48px;
+  }
+  header {
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+  h1 {
+    font-size: 30px;
+  }
+  .brand-subtitle {
+    font-size: 15px;
+  }
+  .hero-copy {
+    gap: 10px;
+  }
+  .passkey-actions {
+    flex-direction: column;
+  }
   .grid {
     grid-template-columns: 1fr;
   }
@@ -327,6 +423,11 @@ dialog::backdrop {
   }
   .history-actions {
     flex-wrap: wrap;
+  }
+  .point-history-item {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
   }
   .card {
     padding: 18px;

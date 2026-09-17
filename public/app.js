@@ -234,22 +234,43 @@ function setRealtimeJsonDownload(result, transcript, cost) {
   link.hidden = false;
 }
 async function loadHistory() {
-  const minutes = await api("/api/minutes");
+  const [minutes, pointHistory] = await Promise.all([
+    api("/api/minutes"),
+    api("/api/point-history"),
+  ]);
   const history = $("#history");
   if (!minutes.length) {
     history.className = "history empty";
     history.textContent = "まだ議事録はありません。";
-    return;
+  } else {
+    history.className = "history";
+    history.innerHTML = minutes.map((m) => {
+      const date = new Date(m.created_at).toLocaleString("ja-JP");
+      return `<article class="history-item"><div><div class="history-title">${esc(date)} — ${
+        esc(m.result?.summary || m.title || "議事録")
+      }</div><div class="hint">${
+        esc(m.title)
+      } ・ ${m.charged_points}pt</div></div><div class="history-actions"><button class="small" data-view-id="${m.id}">表示</button><button class="small" data-download-id="${m.id}">JSONをダウンロード</button></div></article>`;
+    }).join("");
   }
-  history.className = "history";
-  history.innerHTML = minutes.map((m) => {
-    const date = new Date(m.created_at).toLocaleString("ja-JP");
-    return `<article class="history-item"><div><div class="history-title">${esc(date)} — ${
-      esc(m.result?.summary || m.title || "議事録")
-    }</div><div class="hint">${
-      esc(m.title)
-    } ・ ${m.charged_points}pt</div></div><div class="history-actions"><button class="small" data-view-id="${m.id}">表示</button><button class="small" data-download-id="${m.id}">JSONをダウンロード</button></div></article>`;
-  }).join("");
+  const pointHistoryElement = $("#pointHistory");
+  if (!pointHistory.length) {
+    pointHistoryElement.className = "point-history empty";
+    pointHistoryElement.textContent = "利用履歴はありません。";
+  } else {
+    pointHistoryElement.className = "point-history";
+    pointHistoryElement.innerHTML = pointHistory.map((item) => {
+      const sign = item.points > 0 ? "+" : "";
+      const className = item.points > 0 ? "credit" : "debit";
+      return `<div class="point-history-item"><span>${
+        esc(
+          new Date(item.created_at).toLocaleString("ja-JP"),
+        )
+      } ・ ${
+        esc(item.reason)
+      }</span><strong class="${className}">${sign}${item.points} pt</strong></div>`;
+    }).join("");
+  }
   history.querySelectorAll("[data-view-id]").forEach((button) => {
     button.onclick = () => {
       const selected = minutes.find((m) => String(m.id) === button.dataset.viewId);
