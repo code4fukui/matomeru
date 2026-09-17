@@ -57,9 +57,9 @@ function randomId() {
   return Base62UX.encode(crypto.getRandomValues(new Uint8Array(16)));
 }
 function userIdBytes(userId: string): Uint8Array<ArrayBuffer> {
-  const decoded = Base62UX.decode(userId);
-  const bytes = new Uint8Array(decoded.length);
-  bytes.set(decoded);
+  const encoded = new TextEncoder().encode(userId);
+  const bytes = new Uint8Array(encoded.length);
+  bytes.set(encoded);
   return bytes;
 }
 function passkeyContext(request: Request) {
@@ -799,7 +799,14 @@ async function handler(request: Request) {
     if (!user) return fail("Unauthorized", 401);
     return realtime(request, user);
   }
-  if (url.pathname.startsWith("/api/")) return api(request, url);
+  if (url.pathname.startsWith("/api/")) {
+    try {
+      return await api(request, url);
+    } catch (error) {
+      console.error("API request failed:", error);
+      return fail("サーバー内部エラーが発生しました", 500);
+    }
+  }
   const path = url.pathname === "/"
     ? join(root, "public/index.html")
     : join(root, "public", url.pathname.slice(1));
