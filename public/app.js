@@ -514,7 +514,6 @@ $("#liveButton").onclick = async () => {
         $("#points").textContent = Number($("#points").textContent) - m.cost.points;
         await loadHistory();
         $("#history").scrollIntoView({ behavior: "smooth", block: "start" });
-        alert(`${m.cost.points}ptを使用しました（API料金目安 $${m.cost.usd}）`);
       }
       if (m.type === "error") alert(`${m.error}${m.detail ? `\n${m.detail}` : ""}`);
     };
