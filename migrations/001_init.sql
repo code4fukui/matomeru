@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS passkeys (
 
 CREATE TABLE IF NOT EXISTS auth_challenges (
   id TEXT PRIMARY KEY,
-  user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
+  user_id TEXT,
   challenge TEXT NOT NULL,
   kind TEXT NOT NULL CHECK (kind IN ('registration', 'authentication')),
   expires_at TEXT NOT NULL,
