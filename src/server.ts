@@ -64,9 +64,10 @@ function userIdBytes(userId: string): Uint8Array<ArrayBuffer> {
 }
 function passkeyContext(request: Request) {
   const url = new URL(request.url);
+  const configuredOrigin = Deno.env.get("PASSKEY_ORIGIN")?.trim().replace(/\/+$/, "");
   return {
-    rpID: Deno.env.get("PASSKEY_RP_ID") || url.hostname,
-    origin: Deno.env.get("PASSKEY_ORIGIN") || url.origin,
+    rpID: Deno.env.get("PASSKEY_RP_ID")?.trim().toLowerCase() || url.hostname,
+    origin: configuredOrigin || url.origin,
   };
 }
 async function body(request: Request) {
@@ -554,7 +555,8 @@ async function api(request: Request, url: URL) {
         200,
         new Headers({ "set-cookie": sessionCookie(createSession(challenge.user_id)) }),
       );
-    } catch {
+    } catch (error) {
+      console.error("Passkey registration verification failed:", error);
       return fail("パスキー登録に失敗しました", 400);
     }
   }
