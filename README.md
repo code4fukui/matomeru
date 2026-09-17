@@ -60,8 +60,7 @@ Upgradeを転送します。ブラウザからは`https://公開ドメイン/`�
 ### 5. 管理者設定
 
 新規登録で発行されたIDを`ADMIN_USER_ID`へ設定して再起動すると、そのユーザーが管理者に
-なります。`ADMIN_USER_ID`を事前に設定している場合は、そのIDを最初のパスキー登録に
-使用できます。
+なります。`ADMIN_USER_ID`を事前に設定している場合は、そのIDを最初のパスキー登録に 使用できます。
 
 ```sh
 deno task start
@@ -76,8 +75,7 @@ deno check --allow-import src/server.ts
 deno test --allow-read --allow-write --allow-env --allow-import
 ```
 
-ログイン後、マイク許可、パスキー登録、リアルタイム録音、議事録JSONダウンロードを確認
-します。
+ログイン後、マイク許可、パスキー登録、リアルタイム録音、議事録JSONダウンロードを確認 します。
 
 ### 運用上の注意
 

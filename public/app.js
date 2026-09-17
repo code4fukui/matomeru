@@ -306,25 +306,30 @@ $("#deleteAccount").onclick = async () => {
     alert(error.message);
   }
 };
-$("#passkeyAction").onclick = async () => {
+$("#passkeyLoginButton").onclick = async () => {
   const status = $("#passkeyStatus");
-  const button = $("#passkeyAction");
+  const button = $("#passkeyLoginButton");
   button.disabled = true;
   try {
-    await passkeyLogin(true);
+    await passkeyLogin();
   } catch (error) {
-    if (error.name !== "NotAllowedError") {
-      status.textContent = error.message;
-      alert(error.message);
-    } else if (await showTerms()) {
-      try {
-        status.textContent = "登録中…";
-        await passkeyRegister();
-      } catch (registerError) {
-        status.textContent = registerError.message;
-        alert(registerError.message);
-      }
-    }
+    status.textContent = error.message;
+    alert(error.message);
+  } finally {
+    button.disabled = false;
+  }
+};
+$("#passkeyRegisterButton").onclick = async () => {
+  if (!await showTerms()) return;
+  const status = $("#passkeyStatus");
+  const button = $("#passkeyRegisterButton");
+  button.disabled = true;
+  try {
+    status.textContent = "登録中…";
+    await passkeyRegister();
+  } catch (error) {
+    status.textContent = error.message;
+    alert(error.message);
   } finally {
     button.disabled = false;
   }
