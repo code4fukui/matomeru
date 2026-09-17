@@ -1,0 +1,16 @@
+{
+  "imports": {
+    "@simplewebauthn/server": "npm:@simplewebauthn/server@13.2.2",
+    "base62ux": "https://code4fukui.github.io/Base62UX/Base62UX.js"
+  },
+  "tasks": {
+    "dev": "deno run --allow-net --allow-read --allow-write --allow-env --allow-import --env-file=.env src/server.ts",
+    "start": "deno run --allow-net --allow-read --allow-write --allow-env --allow-import --env-file=.env src/server.ts",
+    "fmt": "deno fmt",
+    "lint": "deno lint",
+    "check": "deno check --allow-import src/server.ts",
+    "test": "deno test --allow-read --allow-write --allow-env"
+  },
+  "fmt": { "lineWidth": 100 },
+  "lint": { "rules": { "exclude": ["no-explicit-any"] } }
+}

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>matomeru — AI議事録</title>
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <div><span class="eyebrow">AI MEETING NOTES</span><h1>matomeru</h1></div>
+        <div
+          id="account"><span id="balance">残高 <strong><span id="points">0</span> pt</strong></span></div>
+      </header>
+      <section id="login" class="card">
+        <h2>パスキーでログインまたは新規登録</h2>
+        <button id="passkeyAction">パスキーでログインまたは新規登録</button>
+        <p id="passkeyStatus" class="hint">端末の指紋認証・顔認証・画面ロックを利用します。</p>
+      </section>
+      <dialog id="termsDialog">
+        <form method="dialog" id="termsForm" class="terms">
+          <h2>NANI Terms v1.0</h2>
+          <div class="terms-body">
+            <p>本規約は、matomeru（以下「本サービス」）の利用条件を定めるものです。</p>
+            <h3>1. 利用</h3>
+            <p>利用者は、法令および公序良俗に反しない範囲で本サービスを利用します。</p>
+            <h3>2. 音声・データ</h3>
+            <p>利用者は、録音・文字起こし・議事録に含まれる情報を利用する権利を持つことを保証します。入力データは本サービスの議事録生成に利用されます。</p>
+            <h3>3. 禁止事項</h3>
+            <p>不正アクセス、他者の権利侵害、サービス運営を妨げる行為を禁止します。</p>
+            <h3>4. 免責</h3>
+            <p>生成結果は参考情報であり、利用者自身の確認と判断に基づいて利用してください。</p>
+            <h3>5. 改定</h3>
+            <p>本規約は必要に応じて改定され、改定後の規約は本画面で表示します。</p>
+            <p class="hint">制定: 2026-09-16 / バージョン: v1.0</p>
+          </div>
+          <label
+            class="terms-agree"><input id="termsAgree" type="checkbox"> NANI Terms v1.0に同意する</label>
+          <div
+            class="terms-actions"><button value="cancel" class="secondary">キャンセル</button><button id="termsSubmit" value="agree" disabled>同意して登録</button></div>
+        </form>
+      </dialog>
+      <dialog id="accountDialog">
+        <form method="dialog" class="account-form">
+          <h2>アカウント管理</h2>
+          <p id="accountUserId" class="hint"></p>
+          <h3>パスキー</h3>
+          <div id="passkeyList" class="passkey-list"></div>
+          <button type="button" id="addPasskey">パスキーを追加</button>
+          <hr>
+          <button type="button" id="deleteAccount" class="danger">アカウントを削除</button>
+          <button value="cancel" class="secondary">閉じる</button>
+        </form>
+      </dialog>
+      <dialog id="minutesDialog">
+        <div class="minutes-detail">
+          <div id="result" class="result"></div>
+          <button id="closeMinutes" class="secondary">閉じる</button>
+        </div>
+      </dialog>
+      <section id="app" hidden>
+        <section
+          class="card live-card"><div><h2>リアルタイム議事録</h2><p class="hint">無音が1.5秒続くとブロックを確定し、文字起こしと要点をチャットのように追加します。</p></div><div class="live-controls"><button id="liveButton">録音を開始</button><button id="livePause" class="secondary" hidden>一時停止</button><a id="audioDownload" class="download-link" hidden>音声をダウンロード</a><a id="minutesJsonDownload" class="download-link" hidden>議事録JSON</a></div><span id="liveStatus" class="hint"></span><div id="liveOverall" class="live-overall" hidden></div><div id="liveBlocks" class="live-blocks"></div><pre id="liveTranscript" class="live-transcript"></pre></section>
+        <section class="card">
+          <h2>過去の議事録</h2>
+          <p class="hint">リアルタイム議事録をとった日時と要点をタイトルとして表示しています。</p>
+          <div id="history" class="history empty">まだ議事録はありません。</div>
+        </section>
+        <section id="admin" class="card" hidden>
+          <h2>管理画面</h2>
+          <div id="users"></div>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
